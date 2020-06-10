@@ -23,6 +23,8 @@ var jet ;
 var laser;
 var fire ;
 var keys;
+var moveSound;
+var laserSound;
 function preload(){
 
     this.load.image('jet','assets/playerShip.png');
@@ -32,6 +34,8 @@ function preload(){
     this.load.image('meteorG2','assets/meteorG2.png');
     this.load.image('meteorB1','assets/meteorB1.png');
     this.load.image('meteorG1','assets/meteorG1.png');
+    this.load.audio('moveJet', ['assets/moveSprite.wav']);
+    this.load.audio('laserSound', ['assets/laserGun.wav']);
 }
 
 function create(){
@@ -41,7 +45,7 @@ function create(){
 
     this.spaceShip = this.add.container(w/2, h/2+200);
     this.jet = this.add.sprite(0, 0 ,'jet');
-    this.laser = this.add.sprite(0, -100 ,'laser');
+    this.laser = this.add.sprite(0, -80 ,'laser');
     this.fire = this.add.sprite(0, -50 ,'fire');
     this.meteor1 = this.add.sprite(100, 50, 'meteorB2');
     this.meteor1.setScale(0.7);
@@ -54,6 +58,9 @@ function create(){
     
 
     this.spaceShip.add([this.jet, this.fire, this.laser]);
+    this.moveSound = this.sound.add('moveJet');
+    this.laserSound = this.sound.add('laserSound');
+    this.laserSound.play();
     // this.input.on('pointermove', function (pointer) {
 
     //     x = pointer.x;
@@ -70,7 +77,8 @@ function update(){
     moveMeteor(this.meteor2,3);
     moveMeteor(this.meteor3, 1);
     moveMeteor(this.meteor4, 4);
-    moveSpaceShip(this.spaceShip, this.keys);
+    moveSpaceShip(this.spaceShip, this.keys, this.moveSound);
+    fire(this.laser, this.spaceShip.y, this.laserSound);
 }
 
 
@@ -88,27 +96,49 @@ function update(){
     }
 
 
-    function moveSpaceShip(ship, keys){
+    function moveSpaceShip(ship, keys, audio){
      
         if(keys.up.isDown){
-            ship.y -= 5;
+            if(ship.y > 20){
+                // audio.play();
+                ship.y -= 5;
+            }
         }else if(keys.down.isDown){
-            ship.y += 5;
+            if(ship.y < config.height-30){
+                // audio.play();
+                ship.y += 5;
+            }   
         }else if(keys.right.isDown){
-            ship.x += 5;
+            if(ship.x < config.width-10){
+                // audio.play();
+                ship.x += 5;
+            }
         }else if(keys.left.isDown){
-            ship.x -= 5;
+            if(ship.x > 10){
+                // audio.play();
+                ship.x -= 5;
+            } 
         }
 
     }
 
+function fire(laser, value, audio){
 
+    // laser.y -=3;
+    // audio.play();
 
+    if(laser.y == -80 || laser.y >= -80-value ){
+        // if(laser.y== -80){audio.play();}
+        laser.y -= 60;
+    }else{
+        audio.play();
+        laser.y = -80;
+        
+    }
 
+}
 
-// function fire(){
-
-
-
+// function resetFire(laser){
+//     laser.y=0;
 // }
 
